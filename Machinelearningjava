@@ -1,0 +1,62 @@
+import java.util.HashMap;
+import java.util.Map;
+
+import com.amazonaws.SdkClientException;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.regions.AwsRegionProviderChain;
+import com.amazonaws.regions.AwsRegionProvider;
+import com.amazonaws.services.machinelearning.AmazonMachineLearning;
+import com.amazonaws.services.machinelearning.AmazonMachineLearningAsyncClientBuilder;
+import com.amazonaws.services.machinelearning.AmazonMachineLearningClientBuilder;
+import com.amazonaws.services.machinelearning.model.GetMLModelRequest;
+import com.amazonaws.services.machinelearning.model.GetMLModelResult;
+import com.amazonaws.services.machinelearning.model.PredictRequest;
+import com.amazonaws.services.machinelearning.model.PredictResult;
+
+public class Main {
+    //public static final Regions{};
+
+
+    public static void main(String[] args) {
+        AmazonMachineLearning client = AmazonMachineLearningClientBuilder.defaultClient();
+        //Region region = Region.getRegion(Regions.US_EAST_1);
+        //client.setRegion(region);
+        //Region regionProviderChain = Region.getRegion(Regions.US_EAST_1);
+
+
+        PredictRequest request = new PredictRequest();
+        String mLModelId = "ml-7BpvpweyEDi";
+        GetMLModelRequest getMLModelRequest = new GetMLModelRequest().withMLModelId(mLModelId);
+        GetMLModelResult mlModel = client.getMLModel(getMLModelRequest );
+        String predictEndpoint = mlModel.getEndpointInfo().getEndpointUrl();
+        Map<String, String> record = new HashMap<String, String>();
+
+        record.put("age","50");
+        record.put("job","management");
+        record.put("marital","divorced");
+        record.put("education","university.degree");
+        record.put("default","no");
+        record.put("housing","yes");
+        record.put("loan","no");
+        record.put("contact","cellular");
+        record.put("month","may");
+        record.put("day_of_week","thu");
+        record.put("duration","204");
+        record.put("campaign","1");
+        record.put("pdays","999");
+        record.put("previous","0");
+        record.put("poutcome","nonexistent");
+        record.put("emp_var_rate","-1.8");
+        record.put("cons_price_idx","92.893");
+        record.put("cons_conf_idx","-46.2");
+        record.put("euribor3m","1.327");
+        record.put("nr_employed","5099.1");
+
+        request.withMLModelId(mLModelId)
+                .withPredictEndpoint(predictEndpoint)
+                .withRecord(record);
+        PredictResult prediction = client.predict(request);
+        System.out.println(prediction);
+    }
+}
